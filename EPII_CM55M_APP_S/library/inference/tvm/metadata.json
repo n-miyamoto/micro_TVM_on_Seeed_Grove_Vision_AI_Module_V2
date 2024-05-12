@@ -1,0 +1,77 @@
+{
+  "modules": {
+    "default": {
+      "executors": [
+        "aot"
+      ],
+      "export_datetime": "2024-05-11 21:20:21Z",
+      "external_dependencies": [
+        {
+          "short_name": "tvm_standalone_crt",
+          "url": "./runtime",
+          "url_type": "mlf_path",
+          "version_spec": "0.11.1"
+        }
+      ],
+      "memory": {
+        "functions": {
+          "main": [
+            {
+              "constants_size_bytes": 0,
+              "device": 1,
+              "inputs": {
+                "input": {
+                  "dtype": "uint8",
+                  "size": 150528
+                }
+              },
+              "io_size_bytes": 156534,
+              "outputs": {
+                "output": {
+                  "dtype": "uint8",
+                  "size": 1001
+                }
+              },
+              "workspace_size_bytes": 1206880
+            }
+          ],
+          "operator_functions": [
+            {
+              "function_name": "tvmgen_default_tvmgen_default_ethos_u_main_0",
+              "workspace": [
+                {
+                  "device": 1,
+                  "workspace_size_bytes": 0
+                }
+              ]
+            },
+            {
+              "function_name": "tvmgen_default_fused_nn_softmax_divide_round_clip_cast",
+              "workspace": [
+                {
+                  "device": 1,
+                  "workspace_size_bytes": 0
+                }
+              ]
+            },
+            {
+              "function_name": "tvmgen_default_fused_reshape_cast_subtract_cast_multiply",
+              "workspace": [
+                {
+                  "device": 1,
+                  "workspace_size_bytes": 0
+                }
+              ]
+            }
+          ]
+        }
+      },
+      "model_name": "default",
+      "style": "full-model",
+      "target": [
+        "c -keys=arm_cpu,cpu -mcpu=cortex-m55"
+      ]
+    }
+  },
+  "version": 7
+}

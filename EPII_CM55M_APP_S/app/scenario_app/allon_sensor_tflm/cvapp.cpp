@@ -20,11 +20,11 @@
 #include "WE2_device.h"
 
 #include "ethosu_driver.h"
-#include "tensorflow/lite/micro/micro_mutable_op_resolver.h"
-#include "tensorflow/lite/micro/micro_interpreter.h"
-#include "tensorflow/lite/schema/schema_generated.h"
-#include "tensorflow/lite/c/common.h"
-#include "tensorflow/lite/micro/micro_error_reporter.h"
+//#include "tensorflow/lite/micro/micro_mutable_op_resolver.h"
+//#include "tensorflow/lite/micro/micro_interpreter.h"
+//#include "tensorflow/lite/schema/schema_generated.h"
+//#include "tensorflow/lite/c/common.h"
+//#include "tensorflow/lite/micro/micro_error_reporter.h"
 
 #include "xprintf.h"
 #include "cisdp_cfg.h"
@@ -59,8 +59,8 @@ constexpr int tensor_arena_size = TENSOR_ARENA_BUFSIZE;
 uint32_t tensor_arena = (uint32_t)tensor_arena_buf;
 
 struct ethosu_driver ethosu_drv; /* Default Ethos-U device driver */
-tflite::MicroInterpreter *int_ptr=nullptr;
-TfLiteTensor* input, *output;
+//tflite::MicroInterpreter *int_ptr=nullptr;
+//TfLiteTensor* input, *output;
 };
 
 
@@ -165,6 +165,8 @@ int cv_init(bool security_enable, bool privilege_enable)
 	if(_arm_npu_init(security_enable, privilege_enable)!=0)
 		return -1;
 
+/*
+
 #if (FLASH_XIP_MODEL == 1)
 	static const tflite::Model*model = tflite::GetModel((const void *)0x3A180000);
 #else
@@ -200,13 +202,14 @@ int cv_init(bool security_enable, bool privilege_enable)
 	output = static_interpreter.output(0);
 
 	xprintf("initial done\n");
+    */
 
 	return ercode;
 }
 
 int cv_run() {
 	int ercode = 0;
-
+/*
 	//give image to input tensor
 	img_rescale((uint8_t*)app_get_raw_addr(), app_get_raw_width(), app_get_raw_height(), INPUT_SIZE_X, INPUT_SIZE_Y,
 			input->data.int8, SC(app_get_raw_width(), INPUT_SIZE_X), SC(app_get_raw_height(), INPUT_SIZE_Y));
@@ -225,11 +228,12 @@ int cv_run() {
 	int8_t person_score = output->data.int8[1];
 	int8_t no_person_score = output->data.int8[0];
 
-	xprintf("person_score:%d\n",person_score);
+	xprintf("person_score:%d  ",person_score);
+	xprintf("no person_score:%d\n",no_person_score);
 	//error_reporter->Report(
 	//	   "person score: %d, no person score: %d\n", person_score,
 	//	   no_person_score);
-
+*/
 	return ercode;
 }
 

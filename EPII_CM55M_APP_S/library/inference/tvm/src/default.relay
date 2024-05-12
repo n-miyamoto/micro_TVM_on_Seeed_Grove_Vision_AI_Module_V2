@@ -1,0 +1,185 @@
+def @main(%input: Tensor[(1, 224, 224, 3), uint8] /* ty=Tensor[(1, 224, 224, 3), uint8] */, output_tensor_names=["MobilenetV1_Predictions_Reshape_1"]) -> Tensor[(1, 1001), uint8] {
+  %0 = @tvmgen_default_tvmgen_default_ethos_u_main_0(%input) /* ty=Tensor[(1, 1, 1, 1001), uint8] */;
+  %1 = reshape(%0, newshape=[1, 1001]) /* ty=Tensor[(1, 1001), uint8] */;
+  %2 = qnn.dequantize(%1, 0.166099f /* ty=float32 */, 66 /* ty=int32 */) /* ty=Tensor[(1, 1001), float32] */;
+  %3 = nn.softmax(%2) /* ty=Tensor[(1, 1001), float32] */;
+  qnn.quantize(%3, 0.00390625f /* ty=float32 */, 0 /* ty=int32 */, out_dtype="uint8") /* ty=Tensor[(1, 1001), uint8] */
+}
+
+def @tvmgen_default_tvmgen_default_ethos_u_main_0(%ethos-u_0_i0: Tensor[(1, 224, 224, 3), uint8] /* ty=Tensor[(1, 224, 224, 3), uint8] */, Inline=1, Compiler="ethos-u", global_symbol="tvmgen_default_tvmgen_default_ethos_u_main_0", Primitive=1) -> Tensor[(1, 1, 1, 1001), uint8] {
+  %62 = fn (%FunctionVar_14_0: Tensor[(1, 224, 224, 3), uint8] /* ty=Tensor[(1, 224, 224, 3), uint8] */, PartitionedFromPattern="qnn.conv2d_nn.bias_add_qnn.requantize_", Composite="ethos-u.qnn_conv2d") -> Tensor[(1, 112, 112, 32), uint8] {
+    %60 = qnn.conv2d(%FunctionVar_14_0, meta[relay.Constant][54] /* ty=Tensor[(3, 3, 3, 32), uint8] */, 128 /* ty=int32 */, 151 /* ty=int32 */, 0.0078125f /* ty=float32 */, 0.0218267f /* ty=float32 */, strides=[2, 2], padding=[0, 0, 1, 1], channels=32, kernel_size=[3, 3], data_layout="NHWC", kernel_layout="HWIO", out_dtype="int32") /* ty=Tensor[(1, 112, 112, 32), int32] */;
+    %61 = nn.bias_add(%60, meta[relay.Constant][55] /* ty=Tensor[(32), int32] */, axis=3) /* ty=Tensor[(1, 112, 112, 32), int32] */;
+    qnn.requantize(%61, 0.000170521f /* ty=float32 */, 0 /* ty=int32 */, 0.0235285f /* ty=float32 */, 0 /* ty=int32 */, axis=3, out_dtype="uint8") /* ty=Tensor[(1, 112, 112, 32), uint8] */
+  } /* ty=fn (Tensor[(1, 224, 224, 3), uint8]) -> Tensor[(1, 112, 112, 32), uint8] */;
+  %63 = %62(%ethos-u_0_i0) /* ty=Tensor[(1, 112, 112, 32), uint8] */;
+  %64 = fn (%FunctionVar_12_01: Tensor[(1, 112, 112, 32), uint8] /* ty=Tensor[(1, 112, 112, 32), uint8] */, PartitionedFromPattern="qnn.conv2d_nn.bias_add_qnn.requantize_", Composite="ethos-u.depthwise_conv2d") -> Tensor[(1, 112, 112, 32), uint8] {
+    %58 = qnn.conv2d(%FunctionVar_12_01, meta[relay.Constant][52] /* ty=Tensor[(3, 3, 32, 1), uint8] */, 0 /* ty=int32 */, 110 /* ty=int32 */, 0.0235285f /* ty=float32 */, 0.292199f /* ty=float32 */, padding=[1, 1, 1, 1], groups=32, channels=32, kernel_size=[3, 3], data_layout="NHWC", kernel_layout="HWOI", out_dtype="int32") /* ty=Tensor[(1, 112, 112, 32), int32] */;
+    %59 = nn.bias_add(%58, meta[relay.Constant][53] /* ty=Tensor[(32), int32] */, axis=3) /* ty=Tensor[(1, 112, 112, 32), int32] */;
+    qnn.requantize(%59, 0.006875f /* ty=float32 */, 0 /* ty=int32 */, 0.0235285f /* ty=float32 */, 0 /* ty=int32 */, axis=3, out_dtype="uint8") /* ty=Tensor[(1, 112, 112, 32), uint8] */
+  } /* ty=fn (Tensor[(1, 112, 112, 32), uint8]) -> Tensor[(1, 112, 112, 32), uint8] */;
+  %65 = %64(%63) /* ty=Tensor[(1, 112, 112, 32), uint8] */;
+  %66 = fn (%FunctionVar_13_0: Tensor[(1, 112, 112, 32), uint8] /* ty=Tensor[(1, 112, 112, 32), uint8] */, PartitionedFromPattern="qnn.conv2d_nn.bias_add_qnn.requantize_", Composite="ethos-u.qnn_conv2d") -> Tensor[(1, 112, 112, 64), uint8] {
+    %56 = qnn.conv2d(%FunctionVar_13_0, meta[relay.Constant][50] /* ty=Tensor[(1, 1, 32, 64), uint8] */, 0 /* ty=int32 */, 121 /* ty=int32 */, 0.0235285f /* ty=float32 */, 0.0304209f /* ty=float32 */, padding=[0, 0, 0, 0], channels=64, kernel_size=[1, 1], data_layout="NHWC", kernel_layout="HWIO", out_dtype="int32") /* ty=Tensor[(1, 112, 112, 64), int32] */;
+    %57 = nn.bias_add(%56, meta[relay.Constant][51] /* ty=Tensor[(64), int32] */, axis=3) /* ty=Tensor[(1, 112, 112, 64), int32] */;
+    qnn.requantize(%57, 0.000715759f /* ty=float32 */, 0 /* ty=int32 */, 0.0235285f /* ty=float32 */, 0 /* ty=int32 */, axis=3, out_dtype="uint8") /* ty=Tensor[(1, 112, 112, 64), uint8] */
+  } /* ty=fn (Tensor[(1, 112, 112, 32), uint8]) -> Tensor[(1, 112, 112, 64), uint8] */;
+  %67 = %66(%65) /* ty=Tensor[(1, 112, 112, 64), uint8] */;
+  %68 = fn (%FunctionVar_11_01: Tensor[(1, 112, 112, 64), uint8] /* ty=Tensor[(1, 112, 112, 64), uint8] */, PartitionedFromPattern="qnn.conv2d_nn.bias_add_qnn.requantize_", Composite="ethos-u.depthwise_conv2d") -> Tensor[(1, 56, 56, 64), uint8] {
+    %54 = qnn.conv2d(%FunctionVar_11_01, meta[relay.Constant][48] /* ty=Tensor[(3, 3, 64, 1), uint8] */, 0 /* ty=int32 */, 130 /* ty=int32 */, 0.0235285f /* ty=float32 */, 0.402773f /* ty=float32 */, strides=[2, 2], padding=[0, 0, 1, 1], groups=64, channels=64, kernel_size=[3, 3], data_layout="NHWC", kernel_layout="HWOI", out_dtype="int32") /* ty=Tensor[(1, 56, 56, 64), int32] */;
+    %55 = nn.bias_add(%54, meta[relay.Constant][49] /* ty=Tensor[(64), int32] */, axis=3) /* ty=Tensor[(1, 56, 56, 64), int32] */;
+    qnn.requantize(%55, 0.00947663f /* ty=float32 */, 0 /* ty=int32 */, 0.0235285f /* ty=float32 */, 0 /* ty=int32 */, axis=3, out_dtype="uint8") /* ty=Tensor[(1, 56, 56, 64), uint8] */
+  } /* ty=fn (Tensor[(1, 112, 112, 64), uint8]) -> Tensor[(1, 56, 56, 64), uint8] */;
+  %69 = %68(%67) /* ty=Tensor[(1, 56, 56, 64), uint8] */;
+  %70 = fn (%FunctionVar_12_0: Tensor[(1, 56, 56, 64), uint8] /* ty=Tensor[(1, 56, 56, 64), uint8] */, PartitionedFromPattern="qnn.conv2d_nn.bias_add_qnn.requantize_", Composite="ethos-u.qnn_conv2d") -> Tensor[(1, 56, 56, 128), uint8] {
+    %52 = qnn.conv2d(%FunctionVar_12_0, meta[relay.Constant][46] /* ty=Tensor[(1, 1, 64, 128), uint8] */, 0 /* ty=int32 */, 104 /* ty=int32 */, 0.0235285f /* ty=float32 */, 0.0151482f /* ty=float32 */, padding=[0, 0, 0, 0], channels=128, kernel_size=[1, 1], data_layout="NHWC", kernel_layout="HWIO", out_dtype="int32") /* ty=Tensor[(1, 56, 56, 128), int32] */;
+    %53 = nn.bias_add(%52, meta[relay.Constant][47] /* ty=Tensor[(128), int32] */, axis=3) /* ty=Tensor[(1, 56, 56, 128), int32] */;
+    qnn.requantize(%53, 0.000356414f /* ty=float32 */, 0 /* ty=int32 */, 0.0235285f /* ty=float32 */, 0 /* ty=int32 */, axis=3, out_dtype="uint8") /* ty=Tensor[(1, 56, 56, 128), uint8] */
+  } /* ty=fn (Tensor[(1, 56, 56, 64), uint8]) -> Tensor[(1, 56, 56, 128), uint8] */;
+  %71 = %70(%69) /* ty=Tensor[(1, 56, 56, 128), uint8] */;
+  %72 = fn (%FunctionVar_10_01: Tensor[(1, 56, 56, 128), uint8] /* ty=Tensor[(1, 56, 56, 128), uint8] */, PartitionedFromPattern="qnn.conv2d_nn.bias_add_qnn.requantize_", Composite="ethos-u.depthwise_conv2d") -> Tensor[(1, 56, 56, 128), uint8] {
+    %50 = qnn.conv2d(%FunctionVar_10_01, meta[relay.Constant][44] /* ty=Tensor[(3, 3, 128, 1), uint8] */, 0 /* ty=int32 */, 160 /* ty=int32 */, 0.0235285f /* ty=float32 */, 0.0605373f /* ty=float32 */, padding=[1, 1, 1, 1], groups=128, channels=128, kernel_size=[3, 3], data_layout="NHWC", kernel_layout="HWOI", out_dtype="int32") /* ty=Tensor[(1, 56, 56, 128), int32] */;
+    %51 = nn.bias_add(%50, meta[relay.Constant][45] /* ty=Tensor[(128), int32] */, axis=3) /* ty=Tensor[(1, 56, 56, 128), int32] */;
+    qnn.requantize(%51, 0.00142435f /* ty=float32 */, 0 /* ty=int32 */, 0.0235285f /* ty=float32 */, 0 /* ty=int32 */, axis=3, out_dtype="uint8") /* ty=Tensor[(1, 56, 56, 128), uint8] */
+  } /* ty=fn (Tensor[(1, 56, 56, 128), uint8]) -> Tensor[(1, 56, 56, 128), uint8] */;
+  %73 = %72(%71) /* ty=Tensor[(1, 56, 56, 128), uint8] */;
+  %74 = fn (%FunctionVar_11_0: Tensor[(1, 56, 56, 128), uint8] /* ty=Tensor[(1, 56, 56, 128), uint8] */, PartitionedFromPattern="qnn.conv2d_nn.bias_add_qnn.requantize_", Composite="ethos-u.qnn_conv2d") -> Tensor[(1, 56, 56, 128), uint8] {
+    %48 = qnn.conv2d(%FunctionVar_11_0, meta[relay.Constant][42] /* ty=Tensor[(1, 1, 128, 128), uint8] */, 0 /* ty=int32 */, 94 /* ty=int32 */, 0.0235285f /* ty=float32 */, 0.0137555f /* ty=float32 */, padding=[0, 0, 0, 0], channels=128, kernel_size=[1, 1], data_layout="NHWC", kernel_layout="HWIO", out_dtype="int32") /* ty=Tensor[(1, 56, 56, 128), int32] */;
+    %49 = nn.bias_add(%48, meta[relay.Constant][43] /* ty=Tensor[(128), int32] */, axis=3) /* ty=Tensor[(1, 56, 56, 128), int32] */;
+    qnn.requantize(%49, 0.000323645f /* ty=float32 */, 0 /* ty=int32 */, 0.0235285f /* ty=float32 */, 0 /* ty=int32 */, axis=3, out_dtype="uint8") /* ty=Tensor[(1, 56, 56, 128), uint8] */
+  } /* ty=fn (Tensor[(1, 56, 56, 128), uint8]) -> Tensor[(1, 56, 56, 128), uint8] */;
+  %75 = %74(%73) /* ty=Tensor[(1, 56, 56, 128), uint8] */;
+  %76 = fn (%FunctionVar_9_01: Tensor[(1, 56, 56, 128), uint8] /* ty=Tensor[(1, 56, 56, 128), uint8] */, PartitionedFromPattern="qnn.conv2d_nn.bias_add_qnn.requantize_", Composite="ethos-u.depthwise_conv2d") -> Tensor[(1, 28, 28, 128), uint8] {
+    %46 = qnn.conv2d(%FunctionVar_9_01, meta[relay.Constant][40] /* ty=Tensor[(3, 3, 128, 1), uint8] */, 0 /* ty=int32 */, 123 /* ty=int32 */, 0.0235285f /* ty=float32 */, 0.0167581f /* ty=float32 */, strides=[2, 2], padding=[0, 0, 1, 1], groups=128, channels=128, kernel_size=[3, 3], data_layout="NHWC", kernel_layout="HWOI", out_dtype="int32") /* ty=Tensor[(1, 28, 28, 128), int32] */;
+    %47 = nn.bias_add(%46, meta[relay.Constant][41] /* ty=Tensor[(128), int32] */, axis=3) /* ty=Tensor[(1, 28, 28, 128), int32] */;
+    qnn.requantize(%47, 0.000394292f /* ty=float32 */, 0 /* ty=int32 */, 0.0235285f /* ty=float32 */, 0 /* ty=int32 */, axis=3, out_dtype="uint8") /* ty=Tensor[(1, 28, 28, 128), uint8] */
+  } /* ty=fn (Tensor[(1, 56, 56, 128), uint8]) -> Tensor[(1, 28, 28, 128), uint8] */;
+  %77 = %76(%75) /* ty=Tensor[(1, 28, 28, 128), uint8] */;
+  %78 = fn (%FunctionVar_10_0: Tensor[(1, 28, 28, 128), uint8] /* ty=Tensor[(1, 28, 28, 128), uint8] */, PartitionedFromPattern="qnn.conv2d_nn.bias_add_qnn.requantize_", Composite="ethos-u.qnn_conv2d") -> Tensor[(1, 28, 28, 256), uint8] {
+    %44 = qnn.conv2d(%FunctionVar_10_0, meta[relay.Constant][38] /* ty=Tensor[(1, 1, 128, 256), uint8] */, 0 /* ty=int32 */, 151 /* ty=int32 */, 0.0235285f /* ty=float32 */, 0.00760185f /* ty=float32 */, padding=[0, 0, 0, 0], channels=256, kernel_size=[1, 1], data_layout="NHWC", kernel_layout="HWIO", out_dtype="int32") /* ty=Tensor[(1, 28, 28, 256), int32] */;
+    %45 = nn.bias_add(%44, meta[relay.Constant][39] /* ty=Tensor[(256), int32] */, axis=3) /* ty=Tensor[(1, 28, 28, 256), int32] */;
+    qnn.requantize(%45, 0.00017886f /* ty=float32 */, 0 /* ty=int32 */, 0.0235285f /* ty=float32 */, 0 /* ty=int32 */, axis=3, out_dtype="uint8") /* ty=Tensor[(1, 28, 28, 256), uint8] */
+  } /* ty=fn (Tensor[(1, 28, 28, 128), uint8]) -> Tensor[(1, 28, 28, 256), uint8] */;
+  %79 = %78(%77) /* ty=Tensor[(1, 28, 28, 256), uint8] */;
+  %80 = fn (%FunctionVar_8_01: Tensor[(1, 28, 28, 256), uint8] /* ty=Tensor[(1, 28, 28, 256), uint8] */, PartitionedFromPattern="qnn.conv2d_nn.bias_add_qnn.requantize_", Composite="ethos-u.depthwise_conv2d") -> Tensor[(1, 28, 28, 256), uint8] {
+    %42 = qnn.conv2d(%FunctionVar_8_01, meta[relay.Constant][36] /* ty=Tensor[(3, 3, 256, 1), uint8] */, 0 /* ty=int32 */, 129 /* ty=int32 */, 0.0235285f /* ty=float32 */, 0.0410553f /* ty=float32 */, padding=[1, 1, 1, 1], groups=256, channels=256, kernel_size=[3, 3], data_layout="NHWC", kernel_layout="HWOI", out_dtype="int32") /* ty=Tensor[(1, 28, 28, 256), int32] */;
+    %43 = nn.bias_add(%42, meta[relay.Constant][37] /* ty=Tensor[(256), int32] */, axis=3) /* ty=Tensor[(1, 28, 28, 256), int32] */;
+    qnn.requantize(%43, 0.000965968f /* ty=float32 */, 0 /* ty=int32 */, 0.0235285f /* ty=float32 */, 0 /* ty=int32 */, axis=3, out_dtype="uint8") /* ty=Tensor[(1, 28, 28, 256), uint8] */
+  } /* ty=fn (Tensor[(1, 28, 28, 256), uint8]) -> Tensor[(1, 28, 28, 256), uint8] */;
+  %81 = %80(%79) /* ty=Tensor[(1, 28, 28, 256), uint8] */;
+  %82 = fn (%FunctionVar_9_0: Tensor[(1, 28, 28, 256), uint8] /* ty=Tensor[(1, 28, 28, 256), uint8] */, PartitionedFromPattern="qnn.conv2d_nn.bias_add_qnn.requantize_", Composite="ethos-u.qnn_conv2d") -> Tensor[(1, 28, 28, 256), uint8] {
+    %40 = qnn.conv2d(%FunctionVar_9_0, meta[relay.Constant][34] /* ty=Tensor[(1, 1, 256, 256), uint8] */, 0 /* ty=int32 */, 122 /* ty=int32 */, 0.0235285f /* ty=float32 */, 0.00643161f /* ty=float32 */, padding=[0, 0, 0, 0], channels=256, kernel_size=[1, 1], data_layout="NHWC", kernel_layout="HWIO", out_dtype="int32") /* ty=Tensor[(1, 28, 28, 256), int32] */;
+    %41 = nn.bias_add(%40, meta[relay.Constant][35] /* ty=Tensor[(256), int32] */, axis=3) /* ty=Tensor[(1, 28, 28, 256), int32] */;
+    qnn.requantize(%41, 0.000151326f /* ty=float32 */, 0 /* ty=int32 */, 0.0235285f /* ty=float32 */, 0 /* ty=int32 */, axis=3, out_dtype="uint8") /* ty=Tensor[(1, 28, 28, 256), uint8] */
+  } /* ty=fn (Tensor[(1, 28, 28, 256), uint8]) -> Tensor[(1, 28, 28, 256), uint8] */;
+  %83 = %82(%81) /* ty=Tensor[(1, 28, 28, 256), uint8] */;
+  %84 = fn (%FunctionVar_7_01: Tensor[(1, 28, 28, 256), uint8] /* ty=Tensor[(1, 28, 28, 256), uint8] */, PartitionedFromPattern="qnn.conv2d_nn.bias_add_qnn.requantize_", Composite="ethos-u.depthwise_conv2d") -> Tensor[(1, 14, 14, 256), uint8] {
+    %38 = qnn.conv2d(%FunctionVar_7_01, meta[relay.Constant][32] /* ty=Tensor[(3, 3, 256, 1), uint8] */, 0 /* ty=int32 */, 122 /* ty=int32 */, 0.0235285f /* ty=float32 */, 0.0134608f /* ty=float32 */, strides=[2, 2], padding=[0, 0, 1, 1], groups=256, channels=256, kernel_size=[3, 3], data_layout="NHWC", kernel_layout="HWOI", out_dtype="int32") /* ty=Tensor[(1, 14, 14, 256), int32] */;
+    %39 = nn.bias_add(%38, meta[relay.Constant][33] /* ty=Tensor[(256), int32] */, axis=3) /* ty=Tensor[(1, 14, 14, 256), int32] */;
+    qnn.requantize(%39, 0.000316712f /* ty=float32 */, 0 /* ty=int32 */, 0.0235285f /* ty=float32 */, 0 /* ty=int32 */, axis=3, out_dtype="uint8") /* ty=Tensor[(1, 14, 14, 256), uint8] */
+  } /* ty=fn (Tensor[(1, 28, 28, 256), uint8]) -> Tensor[(1, 14, 14, 256), uint8] */;
+  %85 = %84(%83) /* ty=Tensor[(1, 14, 14, 256), uint8] */;
+  %86 = fn (%FunctionVar_8_0: Tensor[(1, 14, 14, 256), uint8] /* ty=Tensor[(1, 14, 14, 256), uint8] */, PartitionedFromPattern="qnn.conv2d_nn.bias_add_qnn.requantize_", Composite="ethos-u.qnn_conv2d") -> Tensor[(1, 14, 14, 512), uint8] {
+    %36 = qnn.conv2d(%FunctionVar_8_0, meta[relay.Constant][30] /* ty=Tensor[(1, 1, 256, 512), uint8] */, 0 /* ty=int32 */, 109 /* ty=int32 */, 0.0235285f /* ty=float32 */, 0.00917122f /* ty=float32 */, padding=[0, 0, 0, 0], channels=512, kernel_size=[1, 1], data_layout="NHWC", kernel_layout="HWIO", out_dtype="int32") /* ty=Tensor[(1, 14, 14, 512), int32] */;
+    %37 = nn.bias_add(%36, meta[relay.Constant][31] /* ty=Tensor[(512), int32] */, axis=3) /* ty=Tensor[(1, 14, 14, 512), int32] */;
+    qnn.requantize(%37, 0.000215785f /* ty=float32 */, 0 /* ty=int32 */, 0.0235285f /* ty=float32 */, 0 /* ty=int32 */, axis=3, out_dtype="uint8") /* ty=Tensor[(1, 14, 14, 512), uint8] */
+  } /* ty=fn (Tensor[(1, 14, 14, 256), uint8]) -> Tensor[(1, 14, 14, 512), uint8] */;
+  %87 = %86(%85) /* ty=Tensor[(1, 14, 14, 512), uint8] */;
+  %88 = fn (%FunctionVar_6_01: Tensor[(1, 14, 14, 512), uint8] /* ty=Tensor[(1, 14, 14, 512), uint8] */, PartitionedFromPattern="qnn.conv2d_nn.bias_add_qnn.requantize_", Composite="ethos-u.depthwise_conv2d") -> Tensor[(1, 14, 14, 512), uint8] {
+    %34 = qnn.conv2d(%FunctionVar_6_01, meta[relay.Constant][28] /* ty=Tensor[(3, 3, 512, 1), uint8] */, 0 /* ty=int32 */, 132 /* ty=int32 */, 0.0235285f /* ty=float32 */, 0.0369348f /* ty=float32 */, padding=[1, 1, 1, 1], groups=512, channels=512, kernel_size=[3, 3], data_layout="NHWC", kernel_layout="HWOI", out_dtype="int32") /* ty=Tensor[(1, 14, 14, 512), int32] */;
+    %35 = nn.bias_add(%34, meta[relay.Constant][29] /* ty=Tensor[(512), int32] */, axis=3) /* ty=Tensor[(1, 14, 14, 512), int32] */;
+    qnn.requantize(%35, 0.000869019f /* ty=float32 */, 0 /* ty=int32 */, 0.0235285f /* ty=float32 */, 0 /* ty=int32 */, axis=3, out_dtype="uint8") /* ty=Tensor[(1, 14, 14, 512), uint8] */
+  } /* ty=fn (Tensor[(1, 14, 14, 512), uint8]) -> Tensor[(1, 14, 14, 512), uint8] */;
+  %89 = %88(%87) /* ty=Tensor[(1, 14, 14, 512), uint8] */;
+  %90 = fn (%FunctionVar_7_0: Tensor[(1, 14, 14, 512), uint8] /* ty=Tensor[(1, 14, 14, 512), uint8] */, PartitionedFromPattern="qnn.conv2d_nn.bias_add_qnn.requantize_", Composite="ethos-u.qnn_conv2d") -> Tensor[(1, 14, 14, 512), uint8] {
+    %32 = qnn.conv2d(%FunctionVar_7_0, meta[relay.Constant][26] /* ty=Tensor[(1, 1, 512, 512), uint8] */, 0 /* ty=int32 */, 140 /* ty=int32 */, 0.0235285f /* ty=float32 */, 0.00530005f /* ty=float32 */, padding=[0, 0, 0, 0], channels=512, kernel_size=[1, 1], data_layout="NHWC", kernel_layout="HWIO", out_dtype="int32") /* ty=Tensor[(1, 14, 14, 512), int32] */;
+    %33 = nn.bias_add(%32, meta[relay.Constant][27] /* ty=Tensor[(512), int32] */, axis=3) /* ty=Tensor[(1, 14, 14, 512), int32] */;
+    qnn.requantize(%33, 0.000124702f /* ty=float32 */, 0 /* ty=int32 */, 0.0235285f /* ty=float32 */, 0 /* ty=int32 */, axis=3, out_dtype="uint8") /* ty=Tensor[(1, 14, 14, 512), uint8] */
+  } /* ty=fn (Tensor[(1, 14, 14, 512), uint8]) -> Tensor[(1, 14, 14, 512), uint8] */;
+  %91 = %90(%89) /* ty=Tensor[(1, 14, 14, 512), uint8] */;
+  %92 = fn (%FunctionVar_5_01: Tensor[(1, 14, 14, 512), uint8] /* ty=Tensor[(1, 14, 14, 512), uint8] */, PartitionedFromPattern="qnn.conv2d_nn.bias_add_qnn.requantize_", Composite="ethos-u.depthwise_conv2d") -> Tensor[(1, 14, 14, 512), uint8] {
+    %30 = qnn.conv2d(%FunctionVar_5_01, meta[relay.Constant][24] /* ty=Tensor[(3, 3, 512, 1), uint8] */, 0 /* ty=int32 */, 94 /* ty=int32 */, 0.0235285f /* ty=float32 */, 0.0426099f /* ty=float32 */, padding=[1, 1, 1, 1], groups=512, channels=512, kernel_size=[3, 3], data_layout="NHWC", kernel_layout="HWOI", out_dtype="int32") /* ty=Tensor[(1, 14, 14, 512), int32] */;
+    %31 = nn.bias_add(%30, meta[relay.Constant][25] /* ty=Tensor[(512), int32] */, axis=3) /* ty=Tensor[(1, 14, 14, 512), int32] */;
+    qnn.requantize(%31, 0.00100255f /* ty=float32 */, 0 /* ty=int32 */, 0.0235285f /* ty=float32 */, 0 /* ty=int32 */, axis=3, out_dtype="uint8") /* ty=Tensor[(1, 14, 14, 512), uint8] */
+  } /* ty=fn (Tensor[(1, 14, 14, 512), uint8]) -> Tensor[(1, 14, 14, 512), uint8] */;
+  %93 = %92(%91) /* ty=Tensor[(1, 14, 14, 512), uint8] */;
+  %94 = fn (%FunctionVar_6_0: Tensor[(1, 14, 14, 512), uint8] /* ty=Tensor[(1, 14, 14, 512), uint8] */, PartitionedFromPattern="qnn.conv2d_nn.bias_add_qnn.requantize_", Composite="ethos-u.qnn_conv2d") -> Tensor[(1, 14, 14, 512), uint8] {
+    %28 = qnn.conv2d(%FunctionVar_6_0, meta[relay.Constant][22] /* ty=Tensor[(1, 1, 512, 512), uint8] */, 0 /* ty=int32 */, 127 /* ty=int32 */, 0.0235285f /* ty=float32 */, 0.00496329f /* ty=float32 */, padding=[0, 0, 0, 0], channels=512, kernel_size=[1, 1], data_layout="NHWC", kernel_layout="HWIO", out_dtype="int32") /* ty=Tensor[(1, 14, 14, 512), int32] */;
+    %29 = nn.bias_add(%28, meta[relay.Constant][23] /* ty=Tensor[(512), int32] */, axis=3) /* ty=Tensor[(1, 14, 14, 512), int32] */;
+    qnn.requantize(%29, 0.000116779f /* ty=float32 */, 0 /* ty=int32 */, 0.0235285f /* ty=float32 */, 0 /* ty=int32 */, axis=3, out_dtype="uint8") /* ty=Tensor[(1, 14, 14, 512), uint8] */
+  } /* ty=fn (Tensor[(1, 14, 14, 512), uint8]) -> Tensor[(1, 14, 14, 512), uint8] */;
+  %95 = %94(%93) /* ty=Tensor[(1, 14, 14, 512), uint8] */;
+  %96 = fn (%FunctionVar_4_01: Tensor[(1, 14, 14, 512), uint8] /* ty=Tensor[(1, 14, 14, 512), uint8] */, PartitionedFromPattern="qnn.conv2d_nn.bias_add_qnn.requantize_", Composite="ethos-u.depthwise_conv2d") -> Tensor[(1, 14, 14, 512), uint8] {
+    %26 = qnn.conv2d(%FunctionVar_4_01, meta[relay.Constant][20] /* ty=Tensor[(3, 3, 512, 1), uint8] */, 0 /* ty=int32 */, 127 /* ty=int32 */, 0.0235285f /* ty=float32 */, 0.0283589f /* ty=float32 */, padding=[1, 1, 1, 1], groups=512, channels=512, kernel_size=[3, 3], data_layout="NHWC", kernel_layout="HWOI", out_dtype="int32") /* ty=Tensor[(1, 14, 14, 512), int32] */;
+    %27 = nn.bias_add(%26, meta[relay.Constant][21] /* ty=Tensor[(512), int32] */, axis=3) /* ty=Tensor[(1, 14, 14, 512), int32] */;
+    qnn.requantize(%27, 0.000667241f /* ty=float32 */, 0 /* ty=int32 */, 0.0235285f /* ty=float32 */, 0 /* ty=int32 */, axis=3, out_dtype="uint8") /* ty=Tensor[(1, 14, 14, 512), uint8] */
+  } /* ty=fn (Tensor[(1, 14, 14, 512), uint8]) -> Tensor[(1, 14, 14, 512), uint8] */;
+  %97 = %96(%95) /* ty=Tensor[(1, 14, 14, 512), uint8] */;
+  %98 = fn (%FunctionVar_5_0: Tensor[(1, 14, 14, 512), uint8] /* ty=Tensor[(1, 14, 14, 512), uint8] */, PartitionedFromPattern="qnn.conv2d_nn.bias_add_qnn.requantize_", Composite="ethos-u.qnn_conv2d") -> Tensor[(1, 14, 14, 512), uint8] {
+    %24 = qnn.conv2d(%FunctionVar_5_0, meta[relay.Constant][18] /* ty=Tensor[(1, 1, 512, 512), uint8] */, 0 /* ty=int32 */, 89 /* ty=int32 */, 0.0235285f /* ty=float32 */, 0.0077709f /* ty=float32 */, padding=[0, 0, 0, 0], channels=512, kernel_size=[1, 1], data_layout="NHWC", kernel_layout="HWIO", out_dtype="int32") /* ty=Tensor[(1, 14, 14, 512), int32] */;
+    %25 = nn.bias_add(%24, meta[relay.Constant][19] /* ty=Tensor[(512), int32] */, axis=3) /* ty=Tensor[(1, 14, 14, 512), int32] */;
+    qnn.requantize(%25, 0.000182837f /* ty=float32 */, 0 /* ty=int32 */, 0.0235285f /* ty=float32 */, 0 /* ty=int32 */, axis=3, out_dtype="uint8") /* ty=Tensor[(1, 14, 14, 512), uint8] */
+  } /* ty=fn (Tensor[(1, 14, 14, 512), uint8]) -> Tensor[(1, 14, 14, 512), uint8] */;
+  %99 = %98(%97) /* ty=Tensor[(1, 14, 14, 512), uint8] */;
+  %100 = fn (%FunctionVar_3_01: Tensor[(1, 14, 14, 512), uint8] /* ty=Tensor[(1, 14, 14, 512), uint8] */, PartitionedFromPattern="qnn.conv2d_nn.bias_add_qnn.requantize_", Composite="ethos-u.depthwise_conv2d") -> Tensor[(1, 14, 14, 512), uint8] {
+    %22 = qnn.conv2d(%FunctionVar_3_01, meta[relay.Constant][16] /* ty=Tensor[(3, 3, 512, 1), uint8] */, 0 /* ty=int32 */, 134 /* ty=int32 */, 0.0235285f /* ty=float32 */, 0.0243294f /* ty=float32 */, padding=[1, 1, 1, 1], groups=512, channels=512, kernel_size=[3, 3], data_layout="NHWC", kernel_layout="HWOI", out_dtype="int32") /* ty=Tensor[(1, 14, 14, 512), int32] */;
+    %23 = nn.bias_add(%22, meta[relay.Constant][17] /* ty=Tensor[(512), int32] */, axis=3) /* ty=Tensor[(1, 14, 14, 512), int32] */;
+    qnn.requantize(%23, 0.000572435f /* ty=float32 */, 0 /* ty=int32 */, 0.0235285f /* ty=float32 */, 0 /* ty=int32 */, axis=3, out_dtype="uint8") /* ty=Tensor[(1, 14, 14, 512), uint8] */
+  } /* ty=fn (Tensor[(1, 14, 14, 512), uint8]) -> Tensor[(1, 14, 14, 512), uint8] */;
+  %101 = %100(%99) /* ty=Tensor[(1, 14, 14, 512), uint8] */;
+  %102 = fn (%FunctionVar_4_0: Tensor[(1, 14, 14, 512), uint8] /* ty=Tensor[(1, 14, 14, 512), uint8] */, PartitionedFromPattern="qnn.conv2d_nn.bias_add_qnn.requantize_", Composite="ethos-u.qnn_conv2d") -> Tensor[(1, 14, 14, 512), uint8] {
+    %20 = qnn.conv2d(%FunctionVar_4_0, meta[relay.Constant][14] /* ty=Tensor[(1, 1, 512, 512), uint8] */, 0 /* ty=int32 */, 99 /* ty=int32 */, 0.0235285f /* ty=float32 */, 0.00965865f /* ty=float32 */, padding=[0, 0, 0, 0], channels=512, kernel_size=[1, 1], data_layout="NHWC", kernel_layout="HWIO", out_dtype="int32") /* ty=Tensor[(1, 14, 14, 512), int32] */;
+    %21 = nn.bias_add(%20, meta[relay.Constant][15] /* ty=Tensor[(512), int32] */, axis=3) /* ty=Tensor[(1, 14, 14, 512), int32] */;
+    qnn.requantize(%21, 0.000227253f /* ty=float32 */, 0 /* ty=int32 */, 0.0235285f /* ty=float32 */, 0 /* ty=int32 */, axis=3, out_dtype="uint8") /* ty=Tensor[(1, 14, 14, 512), uint8] */
+  } /* ty=fn (Tensor[(1, 14, 14, 512), uint8]) -> Tensor[(1, 14, 14, 512), uint8] */;
+  %103 = %102(%101) /* ty=Tensor[(1, 14, 14, 512), uint8] */;
+  %104 = fn (%FunctionVar_2_01: Tensor[(1, 14, 14, 512), uint8] /* ty=Tensor[(1, 14, 14, 512), uint8] */, PartitionedFromPattern="qnn.conv2d_nn.bias_add_qnn.requantize_", Composite="ethos-u.depthwise_conv2d") -> Tensor[(1, 14, 14, 512), uint8] {
+    %18 = qnn.conv2d(%FunctionVar_2_01, meta[relay.Constant][12] /* ty=Tensor[(3, 3, 512, 1), uint8] */, 0 /* ty=int32 */, 106 /* ty=int32 */, 0.0235285f /* ty=float32 */, 0.0193668f /* ty=float32 */, padding=[1, 1, 1, 1], groups=512, channels=512, kernel_size=[3, 3], data_layout="NHWC", kernel_layout="HWOI", out_dtype="int32") /* ty=Tensor[(1, 14, 14, 512), int32] */;
+    %19 = nn.bias_add(%18, meta[relay.Constant][13] /* ty=Tensor[(512), int32] */, axis=3) /* ty=Tensor[(1, 14, 14, 512), int32] */;
+    qnn.requantize(%19, 0.000455672f /* ty=float32 */, 0 /* ty=int32 */, 0.0235285f /* ty=float32 */, 0 /* ty=int32 */, axis=3, out_dtype="uint8") /* ty=Tensor[(1, 14, 14, 512), uint8] */
+  } /* ty=fn (Tensor[(1, 14, 14, 512), uint8]) -> Tensor[(1, 14, 14, 512), uint8] */;
+  %105 = %104(%103) /* ty=Tensor[(1, 14, 14, 512), uint8] */;
+  %106 = fn (%FunctionVar_3_0: Tensor[(1, 14, 14, 512), uint8] /* ty=Tensor[(1, 14, 14, 512), uint8] */, PartitionedFromPattern="qnn.conv2d_nn.bias_add_qnn.requantize_", Composite="ethos-u.qnn_conv2d") -> Tensor[(1, 14, 14, 512), uint8] {
+    %16 = qnn.conv2d(%FunctionVar_3_0, meta[relay.Constant][10] /* ty=Tensor[(1, 1, 512, 512), uint8] */, 0 /* ty=int32 */, 153 /* ty=int32 */, 0.0235285f /* ty=float32 */, 0.00544699f /* ty=float32 */, padding=[0, 0, 0, 0], channels=512, kernel_size=[1, 1], data_layout="NHWC", kernel_layout="HWIO", out_dtype="int32") /* ty=Tensor[(1, 14, 14, 512), int32] */;
+    %17 = nn.bias_add(%16, meta[relay.Constant][11] /* ty=Tensor[(512), int32] */, axis=3) /* ty=Tensor[(1, 14, 14, 512), int32] */;
+    qnn.requantize(%17, 0.000128159f /* ty=float32 */, 0 /* ty=int32 */, 0.0235285f /* ty=float32 */, 0 /* ty=int32 */, axis=3, out_dtype="uint8") /* ty=Tensor[(1, 14, 14, 512), uint8] */
+  } /* ty=fn (Tensor[(1, 14, 14, 512), uint8]) -> Tensor[(1, 14, 14, 512), uint8] */;
+  %107 = %106(%105) /* ty=Tensor[(1, 14, 14, 512), uint8] */;
+  %108 = fn (%FunctionVar_1_01: Tensor[(1, 14, 14, 512), uint8] /* ty=Tensor[(1, 14, 14, 512), uint8] */, PartitionedFromPattern="qnn.conv2d_nn.bias_add_qnn.requantize_", Composite="ethos-u.depthwise_conv2d") -> Tensor[(1, 7, 7, 512), uint8] {
+    %14 = qnn.conv2d(%FunctionVar_1_01, meta[relay.Constant][8] /* ty=Tensor[(3, 3, 512, 1), uint8] */, 0 /* ty=int32 */, 126 /* ty=int32 */, 0.0235285f /* ty=float32 */, 0.00783559f /* ty=float32 */, strides=[2, 2], padding=[0, 0, 1, 1], groups=512, channels=512, kernel_size=[3, 3], data_layout="NHWC", kernel_layout="HWOI", out_dtype="int32") /* ty=Tensor[(1, 7, 7, 512), int32] */;
+    %15 = nn.bias_add(%14, meta[relay.Constant][9] /* ty=Tensor[(512), int32] */, axis=3) /* ty=Tensor[(1, 7, 7, 512), int32] */;
+    qnn.requantize(%15, 0.00018436f /* ty=float32 */, 0 /* ty=int32 */, 0.0235285f /* ty=float32 */, 0 /* ty=int32 */, axis=3, out_dtype="uint8") /* ty=Tensor[(1, 7, 7, 512), uint8] */
+  } /* ty=fn (Tensor[(1, 14, 14, 512), uint8]) -> Tensor[(1, 7, 7, 512), uint8] */;
+  %109 = %108(%107) /* ty=Tensor[(1, 7, 7, 512), uint8] */;
+  %110 = fn (%FunctionVar_2_0: Tensor[(1, 7, 7, 512), uint8] /* ty=Tensor[(1, 7, 7, 512), uint8] */, PartitionedFromPattern="qnn.conv2d_nn.bias_add_qnn.requantize_", Composite="ethos-u.qnn_conv2d") -> Tensor[(1, 7, 7, 1024), uint8] {
+    %12 = qnn.conv2d(%FunctionVar_2_0, meta[relay.Constant][6] /* ty=Tensor[(1, 1, 512, 1024), uint8] */, 0 /* ty=int32 */, 130 /* ty=int32 */, 0.0235285f /* ty=float32 */, 0.00817923f /* ty=float32 */, padding=[0, 0, 0, 0], channels=1024, kernel_size=[1, 1], data_layout="NHWC", kernel_layout="HWIO", out_dtype="int32") /* ty=Tensor[(1, 7, 7, 1024), int32] */;
+    %13 = nn.bias_add(%12, meta[relay.Constant][7] /* ty=Tensor[(1024), int32] */, axis=3) /* ty=Tensor[(1, 7, 7, 1024), int32] */;
+    qnn.requantize(%13, 0.000192445f /* ty=float32 */, 0 /* ty=int32 */, 0.0235285f /* ty=float32 */, 0 /* ty=int32 */, axis=3, out_dtype="uint8") /* ty=Tensor[(1, 7, 7, 1024), uint8] */
+  } /* ty=fn (Tensor[(1, 7, 7, 512), uint8]) -> Tensor[(1, 7, 7, 1024), uint8] */;
+  %111 = %110(%109) /* ty=Tensor[(1, 7, 7, 1024), uint8] */;
+  %112 = fn (%FunctionVar_0_02: Tensor[(1, 7, 7, 1024), uint8] /* ty=Tensor[(1, 7, 7, 1024), uint8] */, PartitionedFromPattern="qnn.conv2d_nn.bias_add_qnn.requantize_", Composite="ethos-u.depthwise_conv2d") -> Tensor[(1, 7, 7, 1024), uint8] {
+    %10 = qnn.conv2d(%FunctionVar_0_02, meta[relay.Constant][4] /* ty=Tensor[(3, 3, 1024, 1), uint8] */, 0 /* ty=int32 */, 211 /* ty=int32 */, 0.0235285f /* ty=float32 */, 0.126169f /* ty=float32 */, padding=[1, 1, 1, 1], groups=1024, channels=1024, kernel_size=[3, 3], data_layout="NHWC", kernel_layout="HWOI", out_dtype="int32") /* ty=Tensor[(1, 7, 7, 1024), int32] */;
+    %11 = nn.bias_add(%10, meta[relay.Constant][5] /* ty=Tensor[(1024), int32] */, axis=3) /* ty=Tensor[(1, 7, 7, 1024), int32] */;
+    qnn.requantize(%11, 0.00296857f /* ty=float32 */, 0 /* ty=int32 */, 0.0235285f /* ty=float32 */, 0 /* ty=int32 */, axis=3, out_dtype="uint8") /* ty=Tensor[(1, 7, 7, 1024), uint8] */
+  } /* ty=fn (Tensor[(1, 7, 7, 1024), uint8]) -> Tensor[(1, 7, 7, 1024), uint8] */;
+  %113 = %112(%111) /* ty=Tensor[(1, 7, 7, 1024), uint8] */;
+  %114 = fn (%FunctionVar_1_0: Tensor[(1, 7, 7, 1024), uint8] /* ty=Tensor[(1, 7, 7, 1024), uint8] */, PartitionedFromPattern="qnn.conv2d_nn.bias_add_qnn.requantize_", Composite="ethos-u.qnn_conv2d") -> Tensor[(1, 7, 7, 1024), uint8] {
+    %8 = qnn.conv2d(%FunctionVar_1_0, meta[relay.Constant][2] /* ty=Tensor[(1, 1, 1024, 1024), uint8] */, 0 /* ty=int32 */, 95 /* ty=int32 */, 0.0235285f /* ty=float32 */, 0.0180482f /* ty=float32 */, padding=[0, 0, 0, 0], channels=1024, kernel_size=[1, 1], data_layout="NHWC", kernel_layout="HWIO", out_dtype="int32") /* ty=Tensor[(1, 7, 7, 1024), int32] */;
+    %9 = nn.bias_add(%8, meta[relay.Constant][3] /* ty=Tensor[(1024), int32] */, axis=3) /* ty=Tensor[(1, 7, 7, 1024), int32] */;
+    qnn.requantize(%9, 0.000424646f /* ty=float32 */, 0 /* ty=int32 */, 0.0235285f /* ty=float32 */, 0 /* ty=int32 */, axis=3, out_dtype="uint8") /* ty=Tensor[(1, 7, 7, 1024), uint8] */
+  } /* ty=fn (Tensor[(1, 7, 7, 1024), uint8]) -> Tensor[(1, 7, 7, 1024), uint8] */;
+  %115 = %114(%113) /* ty=Tensor[(1, 7, 7, 1024), uint8] */;
+  %116 = fn (%FunctionVar_0_01: Tensor[(1, 7, 7, 1024), uint8] /* ty=Tensor[(1, 7, 7, 1024), uint8] */, PartitionedFromPattern="cast_nn.avg_pool2d_cast_", Composite="ethos-u.avgpool2d") -> Tensor[(1, 1, 1, 1024), uint8] {
+    %6 = cast(%FunctionVar_0_01, dtype="int32") /* ty=Tensor[(1, 7, 7, 1024), int32] */;
+    %7 = nn.avg_pool2d(%6, pool_size=[7, 7], strides=[2, 2], padding=[0, 0, 0, 0], layout="NHWC") /* ty=Tensor[(1, 1, 1, 1024), int32] */;
+    cast(%7, dtype="uint8") /* ty=Tensor[(1, 1, 1, 1024), uint8] */
+  } /* ty=fn (Tensor[(1, 7, 7, 1024), uint8]) -> Tensor[(1, 1, 1, 1024), uint8] */;
+  %117 = %116(%115) /* ty=Tensor[(1, 1, 1, 1024), uint8] */;
+  %118 = fn (%FunctionVar_0_0: Tensor[(1, 1, 1, 1024), uint8] /* ty=Tensor[(1, 1, 1, 1024), uint8] */, PartitionedFromPattern="qnn.conv2d_nn.bias_add_qnn.requantize_", Composite="ethos-u.qnn_conv2d") -> Tensor[(1, 1, 1, 1001), uint8] {
+    %4 = qnn.conv2d(%FunctionVar_0_0, meta[relay.Constant][0] /* ty=Tensor[(1, 1, 1024, 1001), uint8] */, 0 /* ty=int32 */, 74 /* ty=int32 */, 0.0235285f /* ty=float32 */, 0.0049866f /* ty=float32 */, padding=[0, 0, 0, 0], channels=1001, kernel_size=[1, 1], data_layout="NHWC", kernel_layout="HWIO", out_dtype="int32") /* ty=Tensor[(1, 1, 1, 1001), int32] */;
+    %5 = nn.bias_add(%4, meta[relay.Constant][1] /* ty=Tensor[(1001), int32] */, axis=3) /* ty=Tensor[(1, 1, 1, 1001), int32] */;
+    qnn.requantize(%5, 0.000117327f /* ty=float32 */, 0 /* ty=int32 */, 0.166099f /* ty=float32 */, 66 /* ty=int32 */, axis=3, out_dtype="uint8") /* ty=Tensor[(1, 1, 1, 1001), uint8] */
+  } /* ty=fn (Tensor[(1, 1, 1, 1024), uint8]) -> Tensor[(1, 1, 1, 1001), uint8] */;
+  %118(%117) /* ty=Tensor[(1, 1, 1, 1001), uint8] */
+}
+

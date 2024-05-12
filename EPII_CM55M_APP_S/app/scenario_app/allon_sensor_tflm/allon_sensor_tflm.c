@@ -6,6 +6,14 @@
 #include <stdlib.h>
 #include "powermode_export.h"
 
+
+// tvm headers
+#include <tvm_runtime.h>
+#include "ethosu_mod.h"
+#include "inputs.h"
+#include "labels.h"
+#include "outputs.h"
+
 #define WE2_CHIP_VERSION_C		0x8538000c
 #define FRAME_CHECK_DEBUG		1
 #ifdef TRUSTZONE_SEC
@@ -300,6 +308,49 @@ void app_start_state(APP_STATE_E state)
 
 
 }
+
+bool run_tvm()
+{
+
+	tvm_workspace_t app_workspace;
+	uint8_t g_aot_memory = 10;
+	const size_t WORKSPACE_SIZE = 1024;
+
+	xprintf("Allocating memory\n");
+	StackMemoryManager_Init(&app_workspace, &g_aot_memory, WORKSPACE_SIZE);
+
+	xprintf("Running inference\n");
+	struct tvmgen_default_outputs outputs = {
+		.output = output,
+	};
+	struct tvmgen_default_inputs inputs = {
+		.input = input,
+	};
+	struct ethosu_driver *driver = ethosu_reserve_driver();
+	struct tvmgen_default_devices devices = {
+		.ethos_u = driver,
+	};
+	tvmgen_default_run(&inputs, &outputs, &devices);
+	ethosu_release_driver(driver);
+
+	// Calculate index of max value
+	uint8_t max_value = 0;
+	int32_t max_index = -1;
+	for (unsigned int i = 0; i < output_len; ++i)
+	{
+		if (output[i] > max_value)
+		{
+			max_value = output[i];
+			max_index = i;
+		}
+	}
+	xprintf("The image has been classified as '%s'\n", labels[max_index]);
+
+	// The FVP will shut down when it receives "EXITTHESIM" on the UART
+	xprintf("EXITTHESIM\n");
+	return true;
+}
+
 /*******************************************************************************
  * Code
  ******************************************************************************/
@@ -313,7 +364,7 @@ int app_main(void) {
 
 	hx_drv_pmu_get_ctrl(PMU_pmu_wakeup_EVT, &wakeup_event);
 	hx_drv_pmu_get_ctrl(PMU_pmu_wakeup_EVT1, &wakeup_event1);
-    xprintf("wakeup_event=0x%x,WakeupEvt1=0x%x\n", wakeup_event, wakeup_event1);
+	xprintf("wakeup_event=0x%x,WakeupEvt1=0x%x\n", wakeup_event, wakeup_event1);
 
 #if (FLASH_XIP_MODEL == 1)
     hx_lib_spi_eeprom_open(USE_DW_SPI_MST_Q);
@@ -324,6 +375,14 @@ int app_main(void) {
     	xprintf("cv init fail\n");
     	return -1;
     }
+
+	xprintf("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n");
+	xprintf("!!!!!!!!  hello world !!!!!!!!\n");
+	xprintf("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n");
+
+	if(run_tvm()){
+    	xprintf("run tvm fail\n");
+	}
 
     app_start_state(APP_STATE_ALLON);
 
